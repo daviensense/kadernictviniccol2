@@ -50,9 +50,16 @@ export async function initGallery({ observeReveal, refreshCursorTargets }) {
 
   try {
     let files = [];
+    let assetVersion = Date.now().toString();
     const cacheBuster = Date.now();
     const response = await fetch(`data/gallery.json?v=${cacheBuster}`, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const etag = response.headers.get("etag");
+    const lastModified = response.headers.get("last-modified");
+    if (etag || lastModified) {
+      assetVersion = (etag || lastModified).replace(/[^a-z0-9._-]/gi, "");
+    }
 
     const latest = await response.json();
     if (Array.isArray(latest)) {
@@ -71,7 +78,8 @@ export async function initGallery({ observeReveal, refreshCursorTargets }) {
     const items = orderedFiles.map((file) => {
       const preferred = String(file).replace(/\.(jpe?g|png)$/i, ".webp");
       const hasWebpTwin = fileSet.has(preferred.toLowerCase());
-      const src = `gallery/${hasWebpTwin ? preferred : file}`;
+      const fileName = hasWebpTwin ? preferred : file;
+      const src = `gallery/${fileName}?v=${encodeURIComponent(assetVersion)}`;
       const label = toLabel(file);
       return { src, label };
     });
