@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kadeřnictví NICCOL — Kozojedy</title>
+<meta name="description" content="Kadeřnictví NICCOL nabízí dámské, pánské, dětské střihy, společenské účesy a mnoho dalšího. Kozojedy.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+<link rel="dns-prefetch" href="//images.unsplash.com">
+<link rel="preload" as="image" href="images/logo.png" fetchpriority="high">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1600&q=75&auto=format&fit=crop" imagesrcset="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=75&auto=format&fit=crop 800w, https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1600&q=75&auto=format&fit=crop 1600w" imagesizes="100vw">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+<link rel="stylesheet" href="styles/main.css">
+
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true"><defs><linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FF2D9B"/><stop offset="50%" stop-color="#FF7A2D"/><stop offset="100%" stop-color="#FFBE2D"/></linearGradient><filter id="rmblack" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  1 1 1 -0.6 0"/></filter><filter id="logo-rmblk" color-interpolation-filters="sRGB" x="-8%" y="-8%" width="116%" height="116%"><feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  6 6 6 0 -2"/></filter></defs></svg>
+<div class="fixed top-0 left-0 right-0 h-0.5 opacity-90" style="background:linear-gradient(90deg,#FF2D9B,#FF7A2D,#FFBE2D);z-index:999"></div>
+<div class="c" id="c"></div>
+<div class="cr" id="cr"></div>
+
+<!-- NOTICE -->
+
+<div class="notice">
+  <strong>⚠ Dočasně uzavřeno</strong> — provozovna je od 18. 9. 2023 uzavřena z důvodu mateřské dovolené. Informace o znovuotevření sledujte zde nebo na Facebooku.
+</div>
+
+<!-- NAV -->
+
+<nav id="nav">
+  <a href="#" class="logo-img-wrap">
+    <img src="images/logo.png" alt="Kadeřnictví Niccol logo" class="nav-logo-img" width="220" height="84" decoding="async" fetchpriority="high">
+  </a>
+  <ul class="nav-links">
+    <li><a href="#sluzby">Služby</a></li>
+    <li><a href="#galerie">Galerie</a></li>
+    <li><a href="#rezervace">Rezervace</a></li>
+    <li><a href="#hodiny">Otevírací doba</a></li>
+    <li><a href="#kontakt">Kontakt</a></li>
+  </ul>
+  <a href="tel:+420722294800" class="nav-tel">+420 722 294 800</a>
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-slideshow" aria-hidden="true">
+    <div class="hero-slide" data-bg="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1600&q=75&auto=format&fit=crop"></div>
+    <div class="hero-slide" data-bg="https://images.unsplash.com/photo-1562322140-8baeececf3df?w=1600&q=75&auto=format&fit=crop"></div>
+    <div class="hero-slide" data-bg="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=1600&q=75&auto=format&fit=crop"></div>
+  </div>
+
+  <div class="hero-inner">
+    <p class="eyebrow">✦ Kozojedy · od roku 2010</p>
+
+    <div class="hero-logo-wrap">
+      <img src="images/logo.png" alt="Kadeřnictví NICCOL" class="hero-logo-img" width="640" height="260" decoding="async" fetchpriority="high">
+    </div>
+
+    <div class="hero-divider"></div>
+
+    <p class="hero-tagline">Dámské · Pánské · Dětské · Společenské účesy</p>
+    <p class="hero-sub">Péče a preciznost na míru každému zákazníkovi.<br>Objednávky na tel. +420 722 294 800.</p>
+
+    <div class="hero-actions">
+      <a href="tel:+420722294800" class="btn-main">Zavolat a objednat</a>
+      <a href="#sluzby" class="btn-ghost">Naše služby</a>
+    </div>
+  </div>
+
+  <a href="#sluzby" class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </a>
+
+  <div class="hero-info-bar">
+    <div class="hero-info-item">
+      <div class="hii-icon">📅</div>
+      <div>
+        <div class="hii-label">Po, St, Pá</div>
+        <div class="hii-val">13:00 – 18:00</div>
+      </div>
+    </div>
+    <div class="hero-info-item">
+      <div class="hii-icon">📅</div>
+      <div>
+        <div class="hii-label">Út, Čt</div>
+        <div class="hii-val">8:00 – 14:00</div>
+      </div>
+    </div>
+    <div class="hero-info-item">
+      <div class="hii-icon">📍</div>
+      <div>
+        <div class="hii-label">Adresa</div>
+        <div class="hii-val">Kozojedy 141, Kralovice</div>
+      </div>
+    </div>
+    <div class="hero-info-item">
+      <div class="hii-icon">📞</div>
+      <div>
+        <div class="hii-label">Telefon</div>
+        <div class="hii-val">+420 722 294 800</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- SERVICES -->
+
+<section class="services" id="sluzby" style="content-visibility:auto;contain-intrinsic-size:1300px">
+  <div class="services-inner">
+    <div class="services-head r">
+      <div>
+        <p class="s-label">Co nabízíme</p>
+        <h2 class="s-title">Naše <em>služby</em></h2>
+      </div>
+    </div>
+    <div class="services-grid">
+      <div class="svc r">
+        <div class="svc-img" style="background-image:url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=700&q=75&auto=format&fit=crop')"></div>
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg></div>
+        <div class="svc-name">Dámský střih</div>
+        <p class="svc-desc">Střih na míru tváři a přání zákaznice. Moderní i klasické varianty, foukání, styling.</p>
+      </div>
+      <div class="svc r" style="transition-delay:.15s">
+        <div class="svc-img" style="background-image:url('https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=700&q=75&auto=format&fit=crop')"></div>
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><rect x="4" y="4" width="16" height="10" rx="1"/><path d="M7 4v5M10 4v5M13 4v5M16 4v5"/></svg></div>
+        <div class="svc-name">Pánský střih</div>
+        <p class="svc-desc">Přesné pánské střihy klasickým i moderním způsobem. Upravte svůj styl podle nálady.</p>
+      </div>
+      <div class="svc r" style="transition-delay:.3s">
+        <div class="svc-img" style="background-image:url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=700&q=75&auto=format&fit=crop')"></div>
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/></svg></div>
+        <div class="svc-name">Dětský střih</div>
+        <p class="svc-desc">Střihy pro ty nejmenší v příjemné a pohodové atmosféře, aby se děti cítily jako doma.</p>
+      </div>
+      <div class="svc r" style="transition-delay:.1s">
+        <div class="svc-img" style="background-image:url('https://images.unsplash.com/photo-1562322140-8baeececf3df?w=700&q=75&auto=format&fit=crop')"></div>
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <div class="svc-name">Večerní účesy</div>
+        <p class="svc-desc">Slavnostní a společenské účesy pro plesy, večírky, promoce nebo jiné výjimečné události.</p>
+      </div>
+      <div class="svc r" style="transition-delay:.25s">
+        <div class="svc-img" style="background-image:url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=700&q=75&auto=format&fit=crop')"></div>
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <div class="svc-name">Svatební účesy</div>
+        <p class="svc-desc">Váš velký den si zaslouží dokonalý účes. Přijďte na konzultaci a naplánujeme vše dopředu.</p>
+      </div>
+      <div class="svc r" style="transition-delay:.4s">
+        <div class="svc-img" style="background-image:url('https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?w=700&q=75&auto=format&fit=crop')"></div>
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="url(#iconGrad)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div class="svc-name">Individuální objednávka</div>
+        <p class="svc-desc">Máte speciální přání? Zavolejte nebo napište — rádi se domluvíme na termínu a přizpůsobíme se vám.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- GALLERY -->
+
+<section class="gallery" id="galerie" style="content-visibility:auto;contain-intrinsic-size:900px">
+  <div class="gallery-inner">
+    <div class="gallery-head r">
+      <div>
+        <p class="s-label">Naše práce</p>
+        <h2 class="s-title">Fotogalerie <em>inspirace</em></h2>
+        <p class="s-text max-w-lg mt-3">Ukázky střihů, barvení a účesů. Klikněte na fotografii pro detail.</p>
+      </div>
+    </div>
+    <div class="gallery-grid" id="galleryGrid">
+      <!-- photos loaded dynamically from /gallery folder via gallery.php -->
+    </div>
+    <div class="gallery-show-all-wrap" id="galleryShowAllWrap" hidden>
+      <button class="gallery-show-all-btn" id="galleryShowAllBtn" type="button">Zobrazit vše</button>
+    </div>
+  </div>
+</section>
+
+<div class="gallery-overlay" id="galleryOverlay" aria-hidden="true">
+  <div class="gallery-overlay-panel">
+    <div class="gallery-overlay-head">
+      <button class="gallery-overlay-close" id="galleryOverlayClose" type="button">&#x2715; Zavřít</button>
+    </div>
+    <div class="gallery-overlay-grid" id="galleryOverlayGrid"></div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lb-overlay" id="lbOverlay">
+  <button class="lb-close">&#x2715; Zavřít</button>
+  <button class="lb-nav lb-prev">&#x2039;</button>
+  <div class="lb-img-wrap">
+    <img src="" alt="" id="lbImg">
+    <p class="lb-caption" id="lbCaption"></p>
+  </div>
+  <button class="lb-nav lb-next">&#x203a;</button>
+  <div class="lb-counter" id="lbCounter"></div>
+</div>
+
+<div class="sep"></div>
+
+<!-- HOURS -->
+
+<section id="hodiny" style="background:var(--bg);content-visibility:auto;contain-intrinsic-size:900px">
+  <div class="hours r">
+    <div>
+      <p class="s-label">Kdy nás najdete</p>
+      <h2 class="s-title">Otevírací <em>doba</em></h2>
+      <p class="s-text mb-10">Objednání předem je vždy vítáno. V úterý a čtvrtek přijímáme i zákazníky bez objednávek.</p>
+      <div class="hours-grid">
+        <div class="hours-row">
+          <div class="hours-day">Pondělí</div>
+          <div class="hours-time">
+            13:00 -- 18:00
+            <div class="hours-note">Pouze po objednání</div>
+          </div>
+        </div>
+        <div class="hours-row">
+          <div class="hours-day">Úterý</div>
+          <div class="hours-time">
+            8:00 -- 14:00
+            <div class="hours-note">S objednáním i bez</div>
+          </div>
+        </div>
+        <div class="hours-row">
+          <div class="hours-day">Středa</div>
+          <div class="hours-time">
+            13:00 -- 18:00
+            <div class="hours-note">Pouze po objednání</div>
+          </div>
+        </div>
+        <div class="hours-row">
+          <div class="hours-day">Čtvrtek</div>
+          <div class="hours-time">
+            8:00 -- 14:00
+            <div class="hours-note">S objednáním i bez</div>
+          </div>
+        </div>
+        <div class="hours-row">
+          <div class="hours-day">Pátek</div>
+          <div class="hours-time">
+            13:00 -- 18:00
+            <div class="hours-note">Pouze po objednání</div>
+          </div>
+        </div>
+        <div class="hours-row">
+          <div class="hours-day">Sobota</div>
+          <div class="hours-time">
+            <span class="hours-closed">Pouze po vzájemné domluvě</span>
+          </div>
+        </div>
+        <div class="hours-row">
+          <div class="hours-day">Neděle</div>
+          <div class="hours-time"><span class="hours-closed">Zavřeno</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVATION SYSTEM -->
+
+<section class="res-section" id="rezervace" style="content-visibility:auto;contain-intrinsic-size:1500px">
+  <div class="res-wrap r">
+    <p class="s-label">Online rezervace</p>
+    <h2 class="s-title mb-3.5">Rezervujte si <em>termín</em></h2>
+    <p class="s-text mb-12 max-w-lg">Vyberte datum, vhodný čas a vyplňte kontaktní údaje. Rezervaci potvrdíme a zobrazíme vám shrnutí.</p>
+<!-- STEPS -->
+<div class="res-steps" id="resSteps">
+  <div class="res-step active" id="step-ind-1">
+    <div class="step-num">1</div><span>Datum &amp; čas</span>
+  </div>
+  <div class="step-line"></div>
+  <div class="res-step" id="step-ind-2">
+    <div class="step-num">2</div><span>Služba &amp; údaje</span>
+  </div>
+  <div class="step-line"></div>
+  <div class="res-step" id="step-ind-3">
+    <div class="step-num">3</div><span>Potvrzení</span>
+  </div>
+</div>
+
+<!-- STEP 1: DATE + TIME -->
+<div class="step-panel active" id="sp1">
+  <div class="step-panel-grid">
+    <div>
+      <div class="cal-header">
+        <button class="cal-nav" id="calPrev">‹</button>
+        <span class="cal-title" id="calTitle"></span>
+        <button class="cal-nav" id="calNext">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <div>
+      <p class="s-label mb-4">Dostupné časy</p>
+      <div id="slotsWrap">
+        <p class="text-sm font-light text-gray-400">← Nejprve vyberte datum v kalendáři</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2: DETAILS -->
+<div class="step-panel" id="sp2">
+  <button class="res-back" id="resBackBtn">Zpět na výběr termínu</button>
+  <div class="step-panel-grid">
+    <div>
+      <div class="res-summary" id="resSummaryTop">
+        <div class="res-summary-title">Vybraný termín</div>
+        <div class="res-summary-row"><span class="res-summary-key">Datum</span><span class="res-summary-val" id="ss-date">—</span></div>
+        <div class="res-summary-row"><span class="res-summary-key">Čas</span><span class="res-summary-val" id="ss-time">—</span></div>
+      </div>
+      <p class="s-label mb-1.5">Kontaktní údaje</p>
+      <h3 class="text-2xl font-light text-gray-100 mb-7">Vyplňte prosím informace</h3>
+      <div class="res-form" id="resForm">
+        <div class="fg-row">
+          <div class="fg">
+            <label>Jméno a příjmení *</label>
+            <input type="text" id="rf-name" placeholder="Jana Nováková">
+          </div>
+          <div class="fg">
+            <label>Telefon *</label>
+            <input type="tel" id="rf-phone" placeholder="+420 777 000 000">
+          </div>
+        </div>
+        <div class="fg">
+          <label>E-mail</label>
+          <input type="email" id="rf-email" placeholder="vas@email.cz">
+        </div>
+        <div class="fg">
+          <label>Služba *</label>
+          <select id="rf-service">
+            <option value="">— Vyberte službu —</option>
+            <option value="Dámský střih">Dámský střih</option>
+            <option value="Pánský střih">Pánský střih</option>
+            <option value="Dětský střih">Dětský střih</option>
+            <option value="Večerní / společenský účes">Večerní / společenský účes</option>
+            <option value="Svatební účes">Svatební účes</option>
+            <option value="Jiné">Jiné</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Poznámka</label>
+          <textarea id="rf-note" rows="2" placeholder="Délka vlasů, barva, speciální přání…"></textarea>
+        </div>
+        <div id="res-error" class="hidden text-xs tracking-wider py-2.5 px-3.5 border border-red-300 bg-red-50 text-red-700"></div>
+        <button class="btn-send" id="submitReservationBtn">Potvrdit rezervaci →</button>
+      </div>
+    </div>
+    <div class="pt-16">
+      <p class="s-label mb-3">Kontaktní informace</p>
+      <div class="contact-items mt-0">
+        <div class="ci py-4">
+          <div class="ci-icon">📞</div>
+          <div><div class="ci-label">Telefon</div><div class="ci-val"><a href="tel:+420722294800">+420 722 294 800</a></div></div>
+        </div>
+        <div class="ci py-4">
+          <div class="ci-icon">✉️</div>
+          <div><div class="ci-label">E-mail</div><div class="ci-val"><a href="mailto:n.smolikova@seznam.cz">n.smolikova@seznam.cz</a></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3: CONFIRMATION -->
+<div class="step-panel" id="sp3">
+  <div class="confirm-box">
+    <span class="confirm-icon">✅</span>
+    <div class="confirm-id" id="conf-id"></div>
+    <h3 class="confirm-title">Rezervace <em>potvrzena!</em></h3>
+    <p class="confirm-sub">Vaše rezervace byla úspěšně zaznamenána. Těšíme se na vás!</p>
+    <div class="confirm-detail" id="conf-detail"></div>
+    <p class="text-sm font-light text-gray-400 leading-relaxed mb-5">
+      V případě dotazů nebo zrušení rezervace nás kontaktujte na<br>
+      <a href="tel:+420722294800" class="text-yellow-400 no-underline">+420 722 294 800</a>
+    </p>
+    <button class="btn-new-res" id="newReservationBtn">Nová rezervace</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<button class="admin-toggle" id="toggleAdminBtn">⚙ Správa rezervací (administrátor)</button>
+<div class="admin-panel" id="adminPanel">
+  <div class="flex justify-between items-center mb-5">
+    <p class="admin-title">Všechny rezervace</p>
+    <button class="admin-clear" id="clearAllBtn">Vymazat vše</button>
+  </div>
+  <div class="admin-res-list" id="adminList"></div>
+</div>
+
+</div>
+</section>
+
+<!-- CONTACT -->
+
+<section class="contact" id="kontakt" style="content-visibility:auto;contain-intrinsic-size:1300px">
+  <div class="contact-inner">
+    <div class="r">
+      <p class="s-label">Kde nás najdete</p>
+      <h2 class="s-title">Kontakt<br>&amp; <em>dotazy</em></h2>
+      <p class="s-text">Objednejte se telefonicky nebo e-mailem. Rádi vám najdeme vhodný termín.</p>
+      <div class="contact-items">
+        <div class="ci">
+          <div class="ci-icon">📍</div>
+          <div>
+            <div class="ci-label">Adresa</div>
+            <div class="ci-val">Kozojedy 141<br>331 41 Kralovice</div>
+          </div>
+        </div>
+        <div class="ci">
+          <div class="ci-icon">📞</div>
+          <div>
+            <div class="ci-label">Telefon</div>
+            <div class="ci-val"><a href="tel:+420722294800">+420 722 294 800</a></div>
+          </div>
+        </div>
+        <div class="ci">
+          <div class="ci-icon">✉️</div>
+          <div>
+            <div class="ci-label">E-mail</div>
+            <div class="ci-val"><a href="mailto:n.smolikova@seznam.cz">n.smolikova@seznam.cz</a></div>
+          </div>
+        </div>
+        <div class="ci">
+          <div class="ci-icon">⏰</div>
+          <div>
+            <div class="ci-label">Provoz</div>
+            <div class="ci-val text-yellow-400">Dočasně uzavřeno<br><span class="text-gray-400 text-sm">Mateřská dovolená od 18. 9. 2023</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- Booking form -->
+<div class="r" style="transition-delay:.2s">
+  <p class="s-label">Zanechte zprávu</p>
+  <h2 class="s-title text-3xl mb-8">Napište nám</h2>
+  <div class="bform">
+    <div class="fg-row">
+      <div class="fg">
+        <label>Jméno</label>
+        <input type="text" placeholder="Vaše jméno">
+      </div>
+      <div class="fg">
+        <label>Telefon</label>
+        <input type="tel" placeholder="+420 …">
+      </div>
+    </div>
+    <div class="fg">
+      <label>Služba</label>
+      <select>
+        <option value="">— Vyberte službu —</option>
+        <option>Dámský střih</option>
+        <option>Pánský střih</option>
+        <option>Dětský střih</option>
+        <option>Večerní / společenský účes</option>
+        <option>Svatební účes</option>
+        <option>Jiné</option>
+      </select>
+    </div>
+    <div class="fg-row">
+      <div class="fg">
+        <label>Preferovaný den</label>
+        <input type="date">
+      </div>
+      <div class="fg">
+        <label>Čas</label>
+        <select>
+          <option>— Preferuji —</option>
+          <option>Dopoledne (8--12)</option>
+          <option>Odpoledne (13--18)</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Zpráva (nepovinné)</label>
+      <textarea rows="3" placeholder="Vaše přání nebo dotaz…"></textarea>
+    </div>
+    <button class="btn-send" id="sendMsgBtn">Odeslat zprávu</button>
+  </div>
+</div>
+
+  <!-- Map -->
+    <div class="map-wrap r" style="transition-delay:.3s">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2554.1!2d13.5041!3d49.9980!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470af1e1b1b1b1b1%3A0x0!2sKozojedy+141%2C+331+41+Kralovice!5e0!3m2!1scs!2scz!4v1699000000000!5m2!1scs!2scz"
+        title="Poloha kade&#345;nictv&#237; NICCOL"
+        allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+      <a href="https://maps.google.com/?q=Kozojedy+141,+331+41+Kralovice" target="_blank" rel="noopener" class="map-overlay-link">Otev&#345;&#237;t v Google Maps \u2192</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+
+<footer style="content-visibility:auto;contain-intrinsic-size:400px">
+  <div class="footer-top">
+    <div>
+      <a href="#" class="logo-img-wrap">
+        <img src="images/logo.png" alt="Kadeřnictví Niccol" class="h-20 w-auto" style="filter:url(#rmblack) drop-shadow(0 0 8px rgba(255,45,155,.2));" width="320" height="80" loading="lazy" decoding="async">
+      </a>
+      <p class="footer-tagline">Kadeřnictví s osobním přístupem. Kozojedy.</p>
+    </div>
+    <ul class="footer-links">
+      <li><a href="#sluzby">Služby</a></li>
+      <li><a href="#hodiny">Otevírací doba</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+      <li><a href="tel:+420722294800">+420 722 294 800</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2010--2026 Kadeřnictví NICCOL. Všechna práva vyhrazena.</span>
+    <span>Kozojedy 141 · 331 41 Kralovice · n.smolikova@seznam.cz</span>
+  </div>
+</footer>
+
+<script type="module" src="js/main.js"></script>
+
+</body>
+</html>

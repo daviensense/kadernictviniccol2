@@ -1,0 +1,46 @@
+[
+  {
+    "key": "mon",
+    "day": "Pondělí",
+    "time": "13:00 -- 23:00",
+    "note": "Pouze po objednání",
+    "heroLabel": "Po, St, Pa",
+    "heroValue": "13:00 – 18:00"
+  },
+  {
+    "key": "tue",
+    "day": "Úterý",
+    "time": "8:00 -- 14:00",
+    "note": "S objednáním i bez",
+    "heroLabel": "Út, Čt",
+    "heroValue": "8:00 – 14:00"
+  },
+  {
+    "key": "wed",
+    "day": "Středa",
+    "time": "13:00 -- 18:00",
+    "note": "Pouze po objednání"
+  },
+  {
+    "key": "thu",
+    "day": "Čtvrtek",
+    "time": "8:00 -- 14:00",
+    "note": "S objednáním i bez"
+  },
+  {
+    "key": "fri",
+    "day": "Pátek",
+    "time": "13:00 -- 18:00",
+    "note": "Pouze po objednání"
+  },
+  {
+    "key": "sat",
+    "day": "Sobota",
+    "closed": "Pouze po vzájemné domluvě"
+  },
+  {
+    "key": "sun",
+    "day": "Neděle",
+    "closed": "Zavřeno"
+  }
+]
