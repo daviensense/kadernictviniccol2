@@ -1,7 +1,6 @@
 import { setLightboxItems, openLightboxAt } from "./lightbox.js";
 
 const MAX_VISIBLE_IMAGES = 12;
-const GALLERY_CACHE_KEY = "niccol_gallery_files_v1";
 let initialized = false;
 
 function toLabel(fileName) {
@@ -51,24 +50,13 @@ export async function initGallery({ observeReveal, refreshCursorTargets }) {
 
   try {
     let files = [];
-    const cached = sessionStorage.getItem(GALLERY_CACHE_KEY);
-    if (cached) {
-      try {
-        files = JSON.parse(cached);
-      } catch (_error) {
-        files = [];
-      }
-    }
+    const cacheBuster = Date.now();
+    const response = await fetch(`data/gallery.json?v=${cacheBuster}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-    if (!Array.isArray(files) || files.length === 0) {
-      const response = await fetch("data/gallery.json", { cache: "force-cache" });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      const latest = await response.json();
-      if (Array.isArray(latest)) {
-        files = latest;
-        sessionStorage.setItem(GALLERY_CACHE_KEY, JSON.stringify(files));
-      }
+    const latest = await response.json();
+    if (Array.isArray(latest)) {
+      files = latest;
     }
 
     if (!Array.isArray(files) || files.length === 0) {
