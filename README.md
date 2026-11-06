@@ -1,96 +1,97 @@
-# README
+# Kadeřnictví NICCOL
 
-This folder contains the static site and helper scripts to build and deploy the site.
+Statický prezentační web kadeřnictví. Aplikace nepoužívá framework ani backend:
+Vite a TypeScript připravují optimalizované statické soubory, zatímco galerie,
+rozvrh a rezervační UI se načítají až při potřebě.
 
-Quick usage
+## Vývoj a kontroly
 
-## Windows GUI and launch icon
+Požadavky: Node.js 22.12+ a npm.
 
-Double-click `WebNiccolApp.lnk` to open the gallery editor and uploader without a console.
-To create or update the shortcut with its own NICCOL taskbar identity and logo, run:
-
-```powershell
-.\tools\create-shortcut.ps1
-```
-
-With the GUI open, right-click its taskbar button and choose **Pin to taskbar**.
-The shortcut opens the existing GUI, not a standalone compiled executable. Keep this
-folder in place; recreate the shortcut if you move it. The GUI uses `images/niccol.ico`
-for its window and taskbar icon. Icon generation and previews
-use Windows image codecs (WebP/AVIF may require the corresponding Windows extensions).
-
-- **Pridat fotky**: select multiple JPG, PNG, GIF, WebP or AVIF files. Originals are
-  copied into `gallery`; duplicate basenames get unique names without overwriting.
-- Select a photo for an inline preview. **Otevrit fotku** opens the original in its
-  associated Windows app if a preview codec is unavailable.
-- Select multiple photos with **Ctrl-click** or **Shift-click**.
-- **Smazat vybrane** or the **Delete key**: permanently delete all selected local photos after one confirmation,
-  including hidden JPG/JPEG/PNG twins when deleting a WebP. This is not undoable.
-- **Drag and drop** selected photos to reorder them together, keeping their relative order.
-  Drop above/below a row to insert before/after it, or in the blank space to append.
-  A purple insertion line shows the drop location while dragging.
-  Drag near the top/bottom edge to scroll. The list matches website
-  display order. Changes are saved immediately; there is no separate Save button.
-- **Nahraj web**: publish the entire local repository to GitHub using the
-  credentials described below. New, changed, and deleted files are included;
-  `.git` metadata is excluded. After a successful upload, the local branch is
-  fetched and advanced to `origin` and the stage is cleared without changing
-  working files. Git must be installed, and the local branch and `origin` must
-  match the deployed branch and repository. Local commits that cannot be
-  fast-forwarded, or staged and unstaged edits to the same file, are preserved
-  and reported instead of being overwritten.
-  When Windows uses a proxy for GitHub, synchronization uses that same proxy
-  for its fetch command without changing global Git settings.
-  Editing locally does not publish automatically.
-  Review the repository folder before uploading: local files such as credentials
-  or other private files will also be published if present.
-
-Regeneration and deployment retain saved ordering, drop missing files, and place
-new files first on the website. WebP is preferred over same-basename JPG/PNG files.
-
-Run the Windows GUI regression checks (uses temporary photos and a local deployment
-stub, never GitHub):
+Pokud síť vyžaduje odchozí proxy, nastavte ji ve svém prostředí nebo npm
+konfiguraci před instalací závislostí (`HTTP_PROXY`/`HTTPS_PROXY`). Web při
+běhu žádnou aplikační proxy nepotřebuje. Pokud proxy provádí TLS inspekci,
+použijte její důvěryhodný certifikát z úložiště Windows; Node.js podporující
+`--use-system-ca` jej načte po nastavení `$env:NODE_OPTIONS = '--use-system-ca'`.
+Nevypínejte ověřování TLS. Proxy přihlašovací údaje neukládejte do repozitáře
+ani do `.env.example`.
 
 ```powershell
-powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\gallery.Tests.ps1
+npm ci
+npm run dev
 ```
 
-## Command-line usage
+Příkazy projektu:
 
-1. Regenerate gallery JSON:
+```powershell
+npm run build       # TypeScript kontrola a optimalizovaný dist/
+npm run preview     # lokální náhled produkčního buildu
+npm test            # Vitest + Playwright (Chromium)
+npm run test:unit   # pouze jednotkové testy
+npm run test:e2e    # pouze browser scénáře
+npm run lint        # ESLint
+npm run typecheck   # TypeScript
+npm run format      # Prettier
+```
+
+Při prvním spuštění Playwright testů nainstalujte prohlížeč:
+
+```powershell
+npx playwright install chromium
+```
+
+`.env.example` je pouze informativní: web momentálně nepotřebuje žádné
+proměnné prostředí ani tajné klíče.
+
+## Rezervace a kontakt
+
+Stránka nemá rezervační API. Záznamy z kalendáře se ukládají jen do
+`localStorage` právě používaného prohlížeče; salon je neobdrží, nepotvrdí
+a neuvidí je z jiného zařízení. Přehled v rezervační sekci není chráněná
+administrace. Zákazníkům proto stránka výslovně doporučuje telefonické
+objednání a neoznačuje lokální uložení za potvrzenou rezervaci.
+
+Kontaktní formulář otevře předvyplněnou zprávu v e-mailové aplikaci. Návštěvník
+musí zprávu v této aplikaci sám odeslat. Provozovna je na webu nadále označena
+jako dočasně uzavřená; před zveřejněním je potřeba ověřit aktuální stav
+a otevírací dobu.
+
+## Galerie a Windows nástroje
+
+Fotografie zůstávají ve složce `gallery/`, jejich pořadí v `data/gallery.json`.
+Web preferuje WebP variantu se stejným názvem bez přípony. Otevírací doba
+je v `data/hours.json`; rezervační sloty se odvozují z ověřeného rozvrhu po
+30 minutách.
+
+Po změně fotografií lze seznam znovu sestavit:
 
 ```powershell
 .\tools\update-gallery.ps1
 ```
 
-2. Deploy to GitHub Pages (script will look up a GitHub token — see below):
+Stávající Windows editor, převod obrázků a GitHub uploader zůstávají dostupné.
+Editor lze otevřít přes `WebNiccolApp.lnk`; regresní test editoru a lokálního
+publikačního workflow:
 
 ```powershell
-.\tools\deploy-github-script.ps1    # optional: -Branch main -Message "..." -Force
+powershell.exe -NoProfile -STA -ExecutionPolicy Bypass -File .\tests\gallery.Tests.ps1
 ```
 
-Where the deploy script obtains the GitHub token
+Uploader publikuje změny Git repozitáře. Zkontrolujte proto obsah repozitáře
+před publikací; nepatří do něj přihlašovací údaje ani neveřejné soubory.
+GitHub token se čte z Windows Credential Manageru (`github_token_hair`) nebo
+z proměnné `GITHUB_TOKEN_HAIR`. Token nikdy nevkládejte do zdrojového kódu ani
+`.env.example`.
 
-- Preferred: Windows Credential Manager (CredentialManager module)
+## Publikace
 
-```powershell
-Install-Module CredentialManager -Scope CurrentUser
-New-StoredCredential -Target 'github_token_hair' -UserName 'token' -Password 'ghp_xxx' -Persist LocalMachine
-```
+Workflow `.github/workflows/pages.yml` spustí typecheck, lint, Vitest,
+Playwright a produkční build při změně větve `main`, následně nasadí `dist/`
+na GitHub Pages. V nastavení repozitáře vyberte **Settings → Pages → Build
+and deployment → Source: GitHub Actions**. Ruční Windows uploader nadále
+odesílá změny do GitHubu; po přijetí změn do `main` proběhne publikace
+automaticky. Build používá relativní cesty, takže funguje i na projektové
+adrese GitHub Pages.
 
-- Alternative: set the environment variable `GITHUB_TOKEN_HAIR` (CI or local session):
-
-```powershell
-# set for current session
-$env:GITHUB_TOKEN_HAIR = 'ghp_xxx'
-# to persist for current user (new shell required)
-setx GITHUB_TOKEN_HAIR 'ghp_xxx'
-```
-
-Using Windows Credential Manager (GUI)
-
-- Open Control Panel → Credential Manager → Windows Credentials (or search "Credential Manager" in Start).
-- Click "Add a generic credential".
-- For "Internet or network address" enter `github_token_hair`.
-- For "User name" enter `token` and for "Password" paste your GitHub personal access token.
-- Click OK — the deploy script will read this credential with the `CredentialManager` module.
+Další podrobnosti o současném stavu, cílovém návrhu a známých omezeních jsou
+v [ARCHITECTURE.md](./ARCHITECTURE.md).
