@@ -1,8 +1,8 @@
-# deploy-github.ps1
-# Deploy website to GitHub Pages using only a GitHub token - no Git required.
+# deploy-github-script.ps1
+# Deploy the repository to GitHub using only a GitHub token - no Git required.
 #
 # Usage:
-#   .\deploy-github.ps1
+#   .\tools\deploy-github-script.ps1
 #
 # Optional parameters:
 #   -Branch "main"              (default: main)
@@ -41,7 +41,7 @@ $masked = if ($tokenLen -le 8) { '*' * $tokenLen } else { $Token.Substring(0,4) 
 Write-Host "Using token from $tokenSource $masked"
 
 
-$root    = $PSScriptRoot
+$root    = Split-Path $PSScriptRoot -Parent
 $api     = "https://api.github.com"
 $headers = @{
     Authorization          = "Bearer $Token"
@@ -59,18 +59,14 @@ function Get-BlobSha([string]$filePath) {
 
 # Convert an absolute local path to a repo-relative forward-slash path.
 function Get-RepoPath([string]$fullPath) {
-    $rel = $fullPath.Substring($root.TrimEnd('\').Length).TrimStart('\').Replace('\', '/')
-    if ($rel -like 'web/*') {
-        return $rel.Substring(4)
-    }
-    return $rel
+    return $fullPath.Substring($root.TrimEnd('\').Length).TrimStart('\').Replace('\', '/')
 }
 
 # ------------------------------------------------------------------
 # 1. Regenerate data/gallery.json
 # ------------------------------------------------------------------
 Write-Host "Updating gallery list..."
-& "$root\update-gallery.ps1"
+& "$PSScriptRoot\update-gallery.ps1"
 Write-Host ""
 
 # ------------------------------------------------------------------
@@ -96,20 +92,13 @@ try {
 }
 
 # ------------------------------------------------------------------
-# 3. Collect local files to deploy
+# 3. Collect repository files to deploy, excluding Git's local metadata
 # ------------------------------------------------------------------
-$imgExts    = @(".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif")
-$localFiles = @()
-$localFiles += Get-Item "$root\index.html"
-$localFiles += Get-Item "$root\styles\main.css"
-$localFiles += Get-Item "$root\data\gallery.json"
-$localFiles += Get-Item "$root\data\hours.json"
-$localFiles += Get-ChildItem "$root\js" -File |
-               Where-Object { $_.Extension -eq '.js' }
-$localFiles += Get-ChildItem "$root\gallery" -File |
-               Where-Object { $imgExts -contains $_.Extension.ToLower() }
-$localFiles += Get-ChildItem "$root\images" -File |
-               Where-Object { $imgExts -contains $_.Extension.ToLower() }
+$localFiles = @(Get-ChildItem -LiteralPath $root -File -Recurse -Force |
+    Where-Object {
+        $repoPath = Get-RepoPath $_.FullName
+        $repoPath -notmatch '(^|/)\.git(/|$)'
+    })
 
 # ------------------------------------------------------------------
 # 4. Create blobs for changed files only
@@ -124,17 +113,9 @@ foreach ($file in $localFiles) {
     $localRepoPaths[(Get-RepoPath $file.FullName)] = $true
 }
 
-# Delete remote files that were previously deployed but no longer exist locally
-# (managed website files deployed from /web)
+# Delete every remote file that no longer exists in the local repository.
 foreach ($remotePath in $remoteShas.Keys) {
-    $isManaged = ($remotePath -eq 'index.html') -or
-                 ($remotePath -eq 'styles/main.css') -or
-                 ($remotePath -match '^js/[^/]+\.js$') -or
-                 ($remotePath -eq 'data/gallery.json') -or
-                 ($remotePath -eq 'data/hours.json') -or
-                 ($remotePath -match '^gallery/[^/]+$') -or
-                 ($remotePath -match '^images/[^/]+$')
-    if ($isManaged -and -not $localRepoPaths.ContainsKey($remotePath)) {
+    if (-not $localRepoPaths.ContainsKey($remotePath)) {
         Write-Host "  delete  $remotePath"
         $treeEntries += @{ path = $remotePath; mode = "100644"; type = "blob"; sha = $null }
     }

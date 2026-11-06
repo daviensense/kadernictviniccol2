@@ -2,9 +2,9 @@
 # Converts JPG/JPEG images in ./gallery to WebP files.
 #
 # Examples:
-#   .\convert-gallery-to-webp.ps1
-#   .\convert-gallery-to-webp.ps1 -Quality 82
-#   .\convert-gallery-to-webp.ps1 -Force -UpdateGalleryJson
+#   .\tools\convert-gallery-to-webp.ps1
+#   .\tools\convert-gallery-to-webp.ps1 -Quality 82
+#   .\tools\convert-gallery-to-webp.ps1 -Force -UpdateGalleryJson
 #
 # Requires either:
 #   - cwebp (from Google WebP tools), or
@@ -22,7 +22,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$galleryDir = Join-Path $PSScriptRoot "gallery"
+$galleryDir = Join-Path (Split-Path $PSScriptRoot -Parent) "gallery"
 if (-not (Test-Path -Path $galleryDir -PathType Container)) {
     throw "Gallery directory not found: $galleryDir"
 }
