@@ -1,5 +1,5 @@
 # deploy-github-script.ps1
-# Deploy the repository to GitHub using only a GitHub token - no Git required.
+# Deploy the repository to GitHub using a GitHub token, then synchronize local Git.
 #
 # Usage:
 #   .\tools\deploy-github-script.ps1
@@ -100,6 +100,18 @@ $localFiles = @(Get-ChildItem -LiteralPath $root -File -Recurse -Force |
         $repoPath -notmatch '(^|/)\.git(/|$)'
     })
 
+function Sync-LocalRepository {
+    try {
+        & "$PSScriptRoot\sync-origin.ps1" `
+            -RepositoryPath $root `
+            -Branch $Branch `
+            -ExpectedRemote "https://github.com/$Owner/$Repo.git"
+    }
+    catch {
+        throw "The website was uploaded, but local Git synchronization failed: $($_.Exception.Message)"
+    }
+}
+
 # ------------------------------------------------------------------
 # 4. Create blobs for changed files only
 # ------------------------------------------------------------------
@@ -145,7 +157,8 @@ foreach ($file in $localFiles) {
 
 if ($treeEntries.Count -eq 0 -and $skipped -gt 0) {
     Write-Host ""
-    Write-Host "Nothing to commit - all files are up to date."
+    Write-Host "Nothing to upload - all files are up to date."
+    Sync-LocalRepository
     exit 0
 }
 
@@ -200,6 +213,8 @@ if ($currentCommitSha) {
         -ContentType "application/json" | Out-Null
 }
 
+Sync-LocalRepository
+
 Write-Host ""
-Write-Host "Done. $($treeEntries.Count) file(s) changed, $skipped unchanged - pushed in 1 commit."
+Write-Host "Done. $($treeEntries.Count) file(s) changed, $skipped unchanged - pushed in 1 commit and synchronized locally."
 Write-Host "Live at: https://$Owner.github.io/$Repo"

@@ -7,6 +7,20 @@ function Assert($Condition, [string]$Message) {
     if (-not $Condition) { throw "FAIL: $Message" }
 }
 
+function Invoke-TestGit([string[]]$Arguments) {
+    $previousErrorActionPreference = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = "Continue"
+        $output = & git @Arguments 2>&1
+        $exitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
+    if ($exitCode -ne 0) { throw "Git command failed: git $($Arguments -join ' ')`n$($output -join "`n")" }
+    return ($output -join "`n").Trim()
+}
+
 function Read-Order {
     @(Get-Content -LiteralPath "$fixture\data\gallery.json" -Raw | ConvertFrom-Json)
 }
@@ -14,7 +28,7 @@ function Read-Order {
 try {
     [void](New-Item -ItemType Directory -Path "$fixture\gallery", "$fixture\data", "$fixture\imports", "$fixture\images", "$fixture\tools")
     Copy-Item -LiteralPath "$root\images\niccol.ico" -Destination "$fixture\images\niccol.ico"
-    foreach ($name in @("deploy-github-gui.ps1", "update-gallery.ps1", "windows-images.ps1")) {
+    foreach ($name in @("deploy-github-gui.ps1", "sync-origin.ps1", "update-gallery.ps1", "windows-images.ps1")) {
         Copy-Item -LiteralPath (Join-Path "$root\tools" $name) -Destination "$fixture\tools"
     }
 
@@ -186,13 +200,70 @@ try {
     [void]$onClick.Invoke($btnDeploy, @([System.EventArgs]::Empty))
     Assert ($lblStatus.Text -eq "Hotovo! Web byl nahran.") "Successful deployment is reported"
 
+    # A successful website deploy should advance the local branch and clear the stage
+    # without changing any working files.
+    $gitRoot = Join-Path $fixture "git-sync"
+    $origin = Join-Path $gitRoot "origin.git"
+    $seed = Join-Path $gitRoot "seed"
+    $local = Join-Path $gitRoot "local"
+    $publisher = Join-Path $gitRoot "publisher"
+    [void](New-Item -ItemType Directory -Path $gitRoot, $seed)
+    Invoke-TestGit @("init", "--bare", $origin) | Out-Null
+    Invoke-TestGit @("-C", $seed, "init") | Out-Null
+    Invoke-TestGit @("-C", $seed, "checkout", "-b", "main") | Out-Null
+    Invoke-TestGit @("-C", $seed, "config", "user.name", "Gallery Test") | Out-Null
+    Invoke-TestGit @("-C", $seed, "config", "user.email", "gallery-test@example.invalid") | Out-Null
+    Set-Content -LiteralPath (Join-Path $seed "index.html") "Initial website"
+    Invoke-TestGit @("-C", $seed, "add", "index.html") | Out-Null
+    Invoke-TestGit @("-C", $seed, "commit", "-m", "Initial website") | Out-Null
+    Invoke-TestGit @("-C", $seed, "remote", "add", "origin", $origin) | Out-Null
+    Invoke-TestGit @("-C", $seed, "push", "-u", "origin", "main") | Out-Null
+    Invoke-TestGit @("--git-dir=$origin", "symbolic-ref", "HEAD", "refs/heads/main") | Out-Null
+    Invoke-TestGit @("clone", "--quiet", "--branch", "main", $origin, $local) | Out-Null
+    Invoke-TestGit @("clone", "--quiet", "--branch", "main", $origin, $publisher) | Out-Null
+    Invoke-TestGit @("-C", $publisher, "config", "user.name", "Gallery Test") | Out-Null
+    Invoke-TestGit @("-C", $publisher, "config", "user.email", "gallery-test@example.invalid") | Out-Null
+    Set-Content -LiteralPath (Join-Path $publisher "index.html") "Uploaded website"
+    Invoke-TestGit @("-C", $publisher, "add", "index.html") | Out-Null
+    Invoke-TestGit @("-C", $publisher, "commit", "-m", "Uploaded website") | Out-Null
+    Invoke-TestGit @("-C", $publisher, "push", "origin", "main") | Out-Null
+    Set-Content -LiteralPath (Join-Path $local "index.html") "Uploaded website"
+    Invoke-TestGit @("-C", $local, "add", "index.html") | Out-Null
+    & "$fixture\tools\sync-origin.ps1" -RepositoryPath $local -Branch main -ExpectedRemote $origin
+    Assert ((Invoke-TestGit @("-C", $local, "rev-parse", "HEAD")) -eq (Invoke-TestGit @("-C", $local, "rev-parse", "origin/main"))) "Local branch advances to origin"
+    Invoke-TestGit @("-C", $local, "diff", "--cached", "--quiet") | Out-Null
+    Assert ((Get-Content -LiteralPath (Join-Path $local "index.html") -Raw).Trim() -eq "Uploaded website") "Synchronization preserves deployed files"
+    Set-Content -LiteralPath (Join-Path $local "index.html") "Keep this local edit"
+    & "$fixture\tools\sync-origin.ps1" -RepositoryPath $local -Branch main -ExpectedRemote $origin | Out-Null
+    Assert ((Get-Content -LiteralPath (Join-Path $local "index.html") -Raw).Trim() -eq "Keep this local edit") "Synchronization preserves subsequent worktree edits"
+    Invoke-TestGit @("-C", $local, "diff", "--cached", "--quiet") | Out-Null
+    Set-Content -LiteralPath (Join-Path $local "index.html") "Staged version"
+    Invoke-TestGit @("-C", $local, "add", "index.html") | Out-Null
+    Set-Content -LiteralPath (Join-Path $local "index.html") "Worktree version"
+    $syncRejected = $false
+    try { & "$fixture\tools\sync-origin.ps1" -RepositoryPath $local -Branch main -ExpectedRemote $origin }
+    catch { $syncRejected = $true }
+    Assert $syncRejected "Overlapping staged and unstaged changes block synchronization"
+    Assert ((Invoke-TestGit @("-C", $local, "show", ":index.html")).Trim() -eq "Staged version") "Overlapping staged content is preserved"
+    Assert ((Get-Content -LiteralPath (Join-Path $local "index.html") -Raw).Trim() -eq "Worktree version") "Overlapping worktree content is preserved"
+    Invoke-TestGit @("-C", $local, "add", "index.html") | Out-Null
+    Invoke-TestGit @("-C", $local, "config", "user.name", "Gallery Test") | Out-Null
+    Invoke-TestGit @("-C", $local, "config", "user.email", "gallery-test@example.invalid") | Out-Null
+    Invoke-TestGit @("-C", $local, "commit", "-m", "Keep local commit") | Out-Null
+    $localCommit = Invoke-TestGit @("-C", $local, "rev-parse", "HEAD")
+    $syncRejected = $false
+    try { & "$fixture\tools\sync-origin.ps1" -RepositoryPath $local -Branch main -ExpectedRemote $origin }
+    catch { $syncRejected = $true }
+    Assert $syncRejected "Diverged local commits block synchronization"
+    Assert ((Invoke-TestGit @("-C", $local, "rev-parse", "HEAD")) -eq $localCommit) "Diverged local commits are preserved"
+
     Remove-GalleryPhotos @($listPhotos.Items)
     Assert ($listPhotos.Items.Count -eq 0) "All photos can be removed"
     Assert ($null -eq $preview.Image) "Empty gallery clears preview"
     Assert (-not $btnRemove.Enabled -and -not $btnOpen.Enabled) "Empty gallery disables selection actions"
     Assert ((Get-Content "$fixture\data\gallery.json" -Raw).Trim() -eq "[]") "Removing last image saves an empty array"
     & "$fixture\tools\update-gallery.ps1" -DisplayOrder @()
-    Write-Output "PASS: drag/drop ordering, multi-selection, batch deletion, Delete key routing, imports, WebP preview, deployment UI, and empty/single manifest shapes."
+    Write-Output "PASS: drag/drop ordering, multi-selection, batch deletion, Delete key routing, imports, WebP preview, deployment UI, origin synchronization, and empty/single manifest shapes."
 }
 finally {
     if ($form) {

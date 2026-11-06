@@ -33,7 +33,13 @@ use Windows image codecs (WebP/AVIF may require the corresponding Windows extens
   display order. Changes are saved immediately; there is no separate Save button.
 - **Nahraj web**: publish the entire local repository to GitHub using the
   credentials described below. New, changed, and deleted files are included;
-  `.git` metadata is excluded. Editing locally does not publish automatically.
+  `.git` metadata is excluded. After a successful upload, the local branch is
+  fetched and advanced to `origin` and the stage is cleared without changing
+  working files. Git must be installed, and the local branch and `origin` must
+  match the deployed branch and repository. Local commits that cannot be
+  fast-forwarded, or staged and unstaged edits to the same file, are preserved
+  and reported instead of being overwritten.
+  Editing locally does not publish automatically.
   Review the repository folder before uploading: local files such as credentials
   or other private files will also be published if present.
 
