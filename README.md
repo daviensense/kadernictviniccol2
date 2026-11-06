@@ -6,16 +6,17 @@ Quick usage
 
 ## Windows GUI and launch icon
 
-Double-click `WebNiccolApp.vbs` to open the gallery editor and uploader without a console.
-To create `WebNiccolApp.lnk` in the repository root with the NICCOL logo, run once:
+Double-click `WebNiccolApp.lnk` to open the gallery editor and uploader without a console.
+To create or update the shortcut with its own NICCOL taskbar identity and logo, run:
 
 ```powershell
 .\tools\create-shortcut.ps1
 ```
 
+With the GUI open, right-click its taskbar button and choose **Pin to taskbar**.
 The shortcut opens the existing GUI, not a standalone compiled executable. Keep this
-folder in place; recreate the shortcut if you move it. The GUI title bar uses
-`images/niccol.ico` as well. Icon generation and previews
+folder in place; recreate the shortcut if you move it. The GUI uses `images/niccol.ico`
+for its window and taskbar icon. Icon generation and previews
 use Windows image codecs (WebP/AVIF may require the corresponding Windows extensions).
 
 - **Pridat fotky**: select multiple JPG, PNG, GIF, WebP or AVIF files. Originals are

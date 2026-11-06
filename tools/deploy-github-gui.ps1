@@ -110,10 +110,30 @@ public class NiccolGalleryListBox : ListBox {
 "@
 }
 
+if (-not ("NiccolTaskbarIdentity" -as [type])) {
+    Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+
+public static class NiccolTaskbarIdentity {
+    public const string AppId = "NICCOL.GalleryEditor";
+
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode, PreserveSig = true)]
+    private static extern int SetCurrentProcessExplicitAppUserModelID(string appId);
+
+    public static void Set() {
+        Marshal.ThrowExceptionForHR(SetCurrentProcessExplicitAppUserModelID(AppId));
+    }
+}
+"@
+}
+[NiccolTaskbarIdentity]::Set()
+
 $form = New-Object System.Windows.Forms.Form
 $appIcon = [System.Drawing.Icon]::new((Join-Path $scriptDir "images\niccol.ico"))
 $form.Icon = $appIcon
 $form.ShowIcon = $true
+$form.ShowInTaskbar = $true
 $form.Text = "Kadernictvi NICCOL - galerie a nahrani webu"
 $form.ClientSize = New-Object System.Drawing.Size(900, 650)
 $form.StartPosition = "CenterScreen"
