@@ -71,7 +71,7 @@ export async function initGallery({ observeReveal, refreshCursorTargets }) {
       return;
     }
 
-    // gallery.json is treated as append-only; newest files are usually at the end.
+    // Stored in reverse display order; the GUI preserves this convention.
     const orderedFiles = [...files].reverse();
 
     const fileSet = new Set(orderedFiles.map((name) => String(name).toLowerCase()));
@@ -79,7 +79,7 @@ export async function initGallery({ observeReveal, refreshCursorTargets }) {
       const preferred = String(file).replace(/\.(jpe?g|png)$/i, ".webp");
       const hasWebpTwin = fileSet.has(preferred.toLowerCase());
       const fileName = hasWebpTwin ? preferred : file;
-      const src = `gallery/${fileName}?v=${encodeURIComponent(assetVersion)}`;
+      const src = `gallery/${encodeURIComponent(fileName)}?v=${encodeURIComponent(assetVersion)}`;
       const label = toLabel(file);
       return { src, label };
     });
