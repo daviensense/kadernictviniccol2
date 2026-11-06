@@ -39,6 +39,8 @@ use Windows image codecs (WebP/AVIF may require the corresponding Windows extens
   match the deployed branch and repository. Local commits that cannot be
   fast-forwarded, or staged and unstaged edits to the same file, are preserved
   and reported instead of being overwritten.
+  When Windows uses a proxy for GitHub, synchronization uses that same proxy
+  for its fetch command without changing global Git settings.
   Editing locally does not publish automatically.
   Review the repository folder before uploading: local files such as credentials
   or other private files will also be published if present.

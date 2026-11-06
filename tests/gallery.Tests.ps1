@@ -233,6 +233,49 @@ try {
     Assert ((Invoke-TestGit @("-C", $local, "rev-parse", "HEAD")) -eq (Invoke-TestGit @("-C", $local, "rev-parse", "origin/main"))) "Local branch advances to origin"
     Invoke-TestGit @("-C", $local, "diff", "--cached", "--quiet") | Out-Null
     Assert ((Get-Content -LiteralPath (Join-Path $local "index.html") -Raw).Trim() -eq "Uploaded website") "Synchronization preserves deployed files"
+
+    $gitExecutable = (Get-Command git -CommandType Application).Source
+    $previousWebProxy = [System.Net.WebRequest]::DefaultWebProxy
+    $previousNoProxy = $env:NO_PROXY
+    $testRemote = "https://github.com/daviensense/kadernictviniccol2.git"
+    $proxyTestState = @{ FetchSeen = $false; FailFetch = $false }
+    try {
+        [System.Net.WebRequest]::DefaultWebProxy = [System.Net.WebProxy]::new("http://proxy.example.invalid:8080")
+        $env:NO_PROXY = "github.com"
+        function git {
+            $gitArguments = @($args)
+            if (($gitArguments -join " ") -like "*remote get-url origin") {
+                $global:LASTEXITCODE = 0
+                return $testRemote
+            }
+            if ($gitArguments -contains "fetch") {
+                Assert ($gitArguments -contains "http.proxy=http://proxy.example.invalid:8080/") "Fetch uses the Windows proxy"
+                Assert ([string]::IsNullOrEmpty($env:NO_PROXY)) "Fetch does not bypass the Windows proxy via NO_PROXY"
+                $proxyTestState.FetchSeen = $true
+                if ($proxyTestState.FailFetch) {
+                    $global:LASTEXITCODE = 1
+                    return "Simulated proxy connection failure"
+                }
+            }
+            & $gitExecutable @gitArguments
+            $global:LASTEXITCODE = $LASTEXITCODE
+        }
+        & "$fixture\tools\sync-origin.ps1" -RepositoryPath $local -Branch main -ExpectedRemote $testRemote | Out-Null
+        Assert $proxyTestState.FetchSeen "GitHub synchronization applies the Windows proxy"
+        Assert ($env:NO_PROXY -eq "github.com") "NO_PROXY is restored after successful fetch"
+        $proxyTestState.FailFetch = $true
+        $syncRejected = $false
+        try { & "$fixture\tools\sync-origin.ps1" -RepositoryPath $local -Branch main -ExpectedRemote $testRemote }
+        catch { $syncRejected = $true }
+        Assert $syncRejected "Proxy fetch errors are reported"
+        Assert ($env:NO_PROXY -eq "github.com") "NO_PROXY is restored after failed fetch"
+    }
+    finally {
+        Remove-Item -LiteralPath function:\git
+        [System.Net.WebRequest]::DefaultWebProxy = $previousWebProxy
+        $env:NO_PROXY = $previousNoProxy
+    }
+
     Set-Content -LiteralPath (Join-Path $local "index.html") "Keep this local edit"
     & "$fixture\tools\sync-origin.ps1" -RepositoryPath $local -Branch main -ExpectedRemote $origin | Out-Null
     Assert ((Get-Content -LiteralPath (Join-Path $local "index.html") -Raw).Trim() -eq "Keep this local edit") "Synchronization preserves subsequent worktree edits"

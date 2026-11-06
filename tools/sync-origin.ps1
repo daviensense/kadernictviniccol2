@@ -60,7 +60,29 @@ if ((Get-RemoteIdentity $origin) -ne (Get-RemoteIdentity $ExpectedRemote)) {
 }
 
 Write-Host "Fetching origin/$Branch..."
-Invoke-RepositoryGit @("fetch", "origin", "refs/heads/$Branch`:refs/remotes/origin/$Branch") | Out-Null
+$fetchArguments = @("fetch", "origin", "refs/heads/$Branch`:refs/remotes/origin/$Branch")
+$windowsProxy = [System.Net.WebRequest]::DefaultWebProxy
+$useWindowsProxy = $false
+if ($origin -match '^https://github\.com/') {
+    $destination = [Uri]$origin
+    if ($windowsProxy -and -not $windowsProxy.IsBypassed($destination)) {
+        $proxyUri = $windowsProxy.GetProxy($destination)
+        $useWindowsProxy = $proxyUri -and $proxyUri.Authority -ne $destination.Authority
+    }
+}
+$previousNoProxy = $env:NO_PROXY
+try {
+    if ($useWindowsProxy) {
+        Write-Host "Using the Windows proxy, as used by the website uploader."
+        $fetchArguments = @("-c", "http.proxy=$($proxyUri.AbsoluteUri)") + $fetchArguments
+        # curl's NO_PROXY can otherwise bypass the explicit Windows proxy.
+        $env:NO_PROXY = ""
+    }
+    Invoke-RepositoryGit $fetchArguments | Out-Null
+}
+finally {
+    $env:NO_PROXY = $previousNoProxy
+}
 $head = Invoke-RepositoryGit @("rev-parse", "HEAD")
 $mergeBase = Invoke-RepositoryGit @("merge-base", "HEAD", "refs/remotes/origin/$Branch")
 if ($mergeBase -ne $head) {
