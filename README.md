@@ -43,6 +43,32 @@ npx playwright install chromium
 `.env.example` je pouze informativní: web momentálně nepotřebuje žádné
 proměnné prostředí ani tajné klíče.
 
+## Vizuální systém
+
+Web používá editorialní kompozici v odstínech slonové kosti a vínové:
+typografický wordmark NICCOL, serifové nadpisy EB Garamond s českou
+diakritikou v běžném i kurzivním řezu a čitelné systémové sans-serif UI.
+EB Garamond má jemnější, humanistickou kresbu bez extrémního kontrastu Bodoni.
+Čtyři lokální WOFF2 soubory (Latin a Latin Extended pro oba řezy) v
+`public/fonts/` se přednačítají bez požadavků na externí fontové služby.
+Součástí je licence SIL Open Font License v `public/fonts/EB-Garamond-OFL.txt`.
+Původní logo zůstává v `images/logo.png`.
+Design tokeny, fluidní typografie, mezery a responzivní rozvržení jsou
+v `styles/main.css`. Fotografie zůstávají lokální WebP; hero se načítá
+prioritně, ostatní snímky líně. Galerie ukazuje pět snímků v asymetrické
+kompozici a úplný obsah je dostupný přes „Zobrazit vše“ a lightbox.
+Fotografie jsou označené jako ilustrační, nikoli jako ověřené práce salonu.
+
+Telefon je hlavní cesta k objednání. Lokální kalendář je záměrně až
+v rozbalovacím osobním plánovači; není to dostupnost salonu.
+Původní běžný rozvrh i informace o uzavření zůstávají viditelné.
+Nezveřejněné ceny ani neověřené služby či sociální profily se nedoplňují.
+Google Maps se otevírají až na žádost návštěvníka přes odkaz na adresu;
+web nenačítá externí mapový iframe.
+
+Playwright ověřuje také šířky 320, 375, 430, 768, 1024, 1440, 1920
+a 2560 px, přetečení, mobilní menu a dostupnost kontaktů bez JavaScriptu.
+
 ## Rezervace a kontakt
 
 Stránka nemá rezervační API. Záznamy z kalendáře se ukládají jen do

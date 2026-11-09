@@ -293,7 +293,12 @@ function goToStep(step: number): void {
       ? byId("conf-title")
       : byId(`sp${step}`)?.querySelector<HTMLElement>("h3, h2");
   focusTarget?.focus();
-  byId("rezervace")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  byId("localPlanner")?.scrollIntoView({
+    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? "instant"
+      : "smooth",
+    block: "start",
+  });
 }
 
 function createRow(label: string, value: string): HTMLElement {

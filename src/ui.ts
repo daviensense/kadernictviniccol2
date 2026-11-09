@@ -1,13 +1,7 @@
-import { galleryAsset } from "./services/gallery-assets";
-
-let revealObserver: IntersectionObserver | null = null;
-
-export function observeReveal(element: Element): void {
-  if (revealObserver) revealObserver.observe(element);
-  else element.classList.add("v");
-}
-
 export function syncModalState(): void {
+  const lightboxOpen = Boolean(document.querySelector(".lb-overlay.open"));
+  const gallery = document.querySelector<HTMLElement>(".gallery-overlay");
+  if (gallery) gallery.inert = lightboxOpen;
   const isOpen = Boolean(
     document.querySelector(".gallery-overlay.open, .lb-overlay.open"),
   );
@@ -25,12 +19,12 @@ export function syncModalState(): void {
 }
 
 function initNavigation(): void {
-  const nav = document.getElementById("nav");
   const toggle = document.getElementById("navToggle");
   const links = document.getElementById("main-navigation");
-  const updateScroll = () => nav?.classList.toggle("s", window.scrollY > 50);
-  updateScroll();
-  window.addEventListener("scroll", updateScroll, { passive: true });
+  const closeMenu = () => {
+    toggle?.setAttribute("aria-expanded", "false");
+    links?.classList.remove("open");
+  };
 
   toggle?.addEventListener("click", () => {
     const open = toggle.getAttribute("aria-expanded") !== "true";
@@ -39,63 +33,29 @@ function initNavigation(): void {
   });
   links?.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => {
     link.addEventListener("click", () => {
-      toggle?.setAttribute("aria-expanded", "false");
-      links.classList.remove("open");
+      closeMenu();
     });
   });
-}
-
-function initReveal(): void {
-  const items = document.querySelectorAll(".r");
-  if (!("IntersectionObserver" in window)) {
-    items.forEach((item) => item.classList.add("v"));
-    return;
-  }
-  revealObserver = new IntersectionObserver(
-    (entries, observer) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add("v");
-        observer.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.12 },
-  );
-  items.forEach((item) => revealObserver?.observe(item));
-}
-
-function applyLocalBackground(element: HTMLElement): void {
-  try {
-    const url = galleryAsset(element.dataset.image ?? "");
-    element.style.backgroundImage = `url("${url}")`;
-  } catch (error) {
-    console.error("Místní obrázek se nepodařilo načíst.", error);
-  }
-}
-
-function initLocalBackgrounds(): void {
-  document
-    .querySelectorAll<HTMLElement>(".hero-slide[data-image]")
-    .forEach(applyLocalBackground);
-  const serviceImages = document.querySelectorAll<HTMLElement>(
-    ".svc-img[data-image]",
-  );
-  if (!("IntersectionObserver" in window)) {
-    serviceImages.forEach(applyLocalBackground);
-    return;
-  }
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting || !(entry.target instanceof HTMLElement))
-          return;
-        applyLocalBackground(entry.target);
-        observer.unobserve(entry.target);
-      });
-    },
-    { rootMargin: "200px", threshold: 0.01 },
-  );
-  serviceImages.forEach((element) => observer.observe(element));
+  document.addEventListener("keydown", (event) => {
+    if (
+      event.key === "Escape" &&
+      toggle?.getAttribute("aria-expanded") === "true"
+    ) {
+      closeMenu();
+      toggle.focus();
+    }
+  });
+  document.addEventListener("click", (event) => {
+    if (
+      event.target instanceof Node &&
+      !document.getElementById("nav")?.contains(event.target)
+    ) {
+      closeMenu();
+    }
+  });
+  window
+    .matchMedia("(min-width: 56.01rem)")
+    .addEventListener("change", closeMenu);
 }
 
 function initOfflineStatus(): void {
@@ -173,8 +133,6 @@ function initContactForm(): void {
 
 export function init(): void {
   initNavigation();
-  initReveal();
-  initLocalBackgrounds();
   initOfflineStatus();
   initContactForm();
 

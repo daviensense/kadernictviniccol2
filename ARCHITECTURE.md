@@ -2,6 +2,22 @@
 
 ## Současný stav
 
+- Statický web na TypeScriptu a Vite, bez runtime frameworku nebo externích
+  fontových služeb. EB Garamond je lokální WOFF2 s českou diakritikou v obou
+  řezech a licencí SIL OFL v `public/fonts/`. HTML a vlastní CSS tvoří
+  ivory/vínový editorialní design s fluidní
+  typografií, asymetrickými fotografiemi a kompaktními seznamy služeb.
+- Hlavní konverzní tok je telefonický kontakt. Lokální kalendář je zachován
+  v rozbalovacím osobním plánovači, výslovně bez potvrzení salonem.
+- Stav dočasného uzavření je viditelný v oznámení, hero, rozvrhu, objednání
+  a kontaktu. Ceny ani neověřené sociální profily se nevymýšlejí.
+- Obrázky jsou lokální WebP, na mobilu hero a fotografie interiéru využívají
+  existující menší varianty. Mapa je pouze odkaz načítaný na žádost návštěvníka.
+- E2E testy pokrývají galerii, místní záznamy, offline stav, mobilní menu,
+  obsah bez JavaScriptu a přetečení při šířkách 320 až 2560 px.
+
+## Historický výchozí stav před migrací na TypeScript
+
 - Jedna dlouhá stránka `index.html` obsahuje prezentaci, galerii, otevírací dobu,
   tříkrokový rezervační formulář, lokální „správu“ a kontaktní formulář.
 - UI a logika jsou rozdělené do šesti nativních JavaScriptových modulů v `js/`.
@@ -88,8 +104,8 @@
 - Provozovna je podle stránky dočasně uzavřená od 18. 9. 2023. Dokud majitel
   nepotvrdí nové datum otevření a rozvrh, publikovaný rozvrh je pouze převzatá
   informace, nikoli příslib dostupného termínu.
-- Google Maps zůstává externím embedem a při blokaci třetích stran nebo offline
-  režimu nemusí být dostupná; textová adresa a odkaz na mapu zůstávají náhradou.
+- Google Maps se otevřou pouze přes odkaz na adresu nebo plánování cesty.
+  Externí mapový iframe se nenačítá; textová adresa je dostupná i bez něj.
 - GitHub Pages musí být nastaven na **GitHub Actions**. Stávající Windows
   uploader nadále publikuje změny do větve; nové workflow z nich vytvoří web.
 - Pro lokální vývoj a kontroly je potřeba podporovaná verze Node.js a npm.

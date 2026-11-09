@@ -4,16 +4,27 @@ import {
   preferredGalleryAsset,
 } from "../services/gallery-assets";
 import { openLightboxAt, setLightboxItems } from "./lightbox";
-import { observeReveal, syncModalState } from "../ui";
+import { syncModalState } from "../ui";
 
-const MAX_VISIBLE_IMAGES = 12;
+const MAX_VISIBLE_IMAGES = 5;
 
 interface GalleryPhoto {
   src: string;
+  thumbnail: string;
+  sourceKey: string;
   label: string;
 }
 
 function photoLabel(fileName: string): string {
+  const stockId = fileName.match(/photo-(\d+)-/);
+  if (stockId) {
+    const labels: Record<string, string> = {
+      "1560066984": "Atmosféra salonu",
+      "1562322140": "Styling vlasů",
+      "1580618672591": "Péče v detailu",
+    };
+    return labels[stockId[1]] ?? "Inspirace pro váš styl";
+  }
   return fileName
     .replace(/^\d+[-_]/, "")
     .replace(/\.[^.]+$/, "")
@@ -31,22 +42,19 @@ function validateManifest(value: unknown): string[] {
   return value;
 }
 
-function createPhoto(
-  photo: GalleryPhoto,
-  index: number,
-  tall: boolean,
-): HTMLButtonElement {
+function createPhoto(photo: GalleryPhoto, index: number): HTMLButtonElement {
   const button = document.createElement("button");
   button.type = "button";
-  button.className = `gallery-item${tall ? " tall" : ""} r`;
+  button.className = "gallery-item";
   button.setAttribute("aria-label", `Zobrazit fotografii: ${photo.label}`);
-  button.style.transitionDelay = `${((index % 4) * 0.08).toFixed(2)}s`;
 
   const image = document.createElement("img");
-  image.src = photo.src;
+  image.src = photo.thumbnail;
   image.alt = photo.label;
   image.loading = "lazy";
   image.decoding = "async";
+  image.width = 800;
+  image.height = 600;
   image.addEventListener(
     "error",
     () => {
@@ -97,8 +105,18 @@ export function initGallery(): void {
     const fileNames = new Set(files.map((file) => file.toLowerCase()));
     const photos = [...files].reverse().map((fileName): GalleryPhoto => {
       const preferred = preferredGalleryAsset(fileName, fileNames);
+      const thumbnail = preferred.includes("photo-1560066984-")
+        ? "04-photo-1560066984-138dadb4c035.webp"
+        : preferred.includes("photo-1562322140-")
+          ? "07-photo-1562322140-8baeececf3df.webp"
+          : preferred;
       return {
         src: galleryAsset(preferred),
+        sourceKey:
+          fileName.match(/photo-\d+-[a-z\d]+/i)?.[0] ?? preferred.toLowerCase(),
+        thumbnail: galleryAsset(
+          fileNames.has(thumbnail.toLowerCase()) ? thumbnail : preferred,
+        ),
         label: photoLabel(fileName) || "Fotografie kadeřnictví",
       };
     });
@@ -112,19 +130,20 @@ export function initGallery(): void {
     setLightboxItems(fullSizeItems);
 
     const visible = document.createDocumentFragment();
-    photos.slice(0, MAX_VISIBLE_IMAGES).forEach((photo, index) => {
-      const item = createPhoto(photo, index, index % 3 === 0);
-      visible.append(item);
-      observeReveal(item);
-    });
+    const previewSources = new Set<string>();
+    for (const [index, photo] of photos.entries()) {
+      if (previewSources.has(photo.sourceKey)) continue;
+      previewSources.add(photo.sourceKey);
+      visible.append(createPhoto(photo, index));
+      if (previewSources.size === MAX_VISIBLE_IMAGES) break;
+    }
     grid.replaceChildren(visible);
     status.hidden = true;
 
     if (photos.length > MAX_VISIBLE_IMAGES) {
       const expanded = document.createDocumentFragment();
       photos.forEach((photo, index) => {
-        const item = createPhoto(photo, index, false);
-        item.classList.remove("r");
+        const item = createPhoto({ ...photo, thumbnail: photo.src }, index);
         expanded.append(item);
       });
       dialogGrid.replaceChildren(expanded);
